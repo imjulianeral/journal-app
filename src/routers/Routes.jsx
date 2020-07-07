@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux'
 
 import { firebase } from '../firebase/fireConfig'
 import { login } from '../actions/auth'
+import { startLoadingNotes } from '../actions/notes'
 import AuthRouter from './AuthRouter'
 import Journal from '../components/journal/Journal'
 import PrivateRoute from './PrivateRoute'
@@ -15,10 +16,12 @@ export default function Routes() {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    firebase.auth().onAuthStateChanged(user => {
+    firebase.auth().onAuthStateChanged(async user => {
       if (user?.uid) {
         dispatch(login(user.uid, user.displayName))
         setAuth(true)
+
+        dispatch(startLoadingNotes(user.uid))
       } else {
         setAuth(false)
       }
